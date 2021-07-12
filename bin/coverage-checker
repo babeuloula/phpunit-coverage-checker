@@ -3,6 +3,7 @@
 
 declare(strict_types=1);
 
+const VERSION = "1.0.1";
 const STATUS_OK = 0;
 const STATUS_ERROR = 1;
 const COLORS = [
@@ -21,7 +22,7 @@ function coloredOutput(string $string, string $color): string
     return "\033[" . COLORS[$color] . "m" . $string . "\033[0m";
 }
 
-function output(string $msg, ?string $color = null, ?int $exitCode = STATUS_OK): void
+function output(string $msg, ?string $color = null, ?int $exitCode = STATUS_OK, bool $newLine = false): void
 {
     if (true === \is_string($color)) {
         $msg = coloredOutput($msg, $color);
@@ -29,15 +30,29 @@ function output(string $msg, ?string $color = null, ?int $exitCode = STATUS_OK):
 
     echo $msg . PHP_EOL;
 
+    if (true === $newLine) {
+        echo PHP_EOL;
+    }
+
     if (true === \is_int($exitCode)) {
         exit($exitCode);
     }
 }
 
+output(
+    sprintf(
+        "PHPUnit coverage checker %s by BaBeuloula.",
+        VERSION
+    ),
+    null,
+    null,
+    true
+);
+
 if (3 !== $argc) {
     output(
         sprintf(
-            "Usage: %s <path/to/coverage.xml> <threshold>",
+            "Usage: %s <path/to/coverage/index.xml> <threshold>",
             $argv[0]
         ),
         'red',
@@ -95,10 +110,9 @@ output(
         coloredOutput(formatPercent($threshold), 'cyan')
     ),
     null,
-    null
+    null,
+    true
 );
-
-output('', null, null);
 
 if ($ratio < $threshold) {
     output(
