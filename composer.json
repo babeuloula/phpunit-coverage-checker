@@ -1,0 +1,18 @@
+{
+    "name": "babeuloula/phpunit-coverage-checker",
+    "description": "PhpUnit coverage checker, fail if coverage goes below a threshold",
+    "keywords": ["phpunit", "coverage", "checker", "threshold", "BaBeuloula"],
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "BaBeuloula",
+            "email": "info@babeuloula.fr"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "ext-xml": "*"
+    },
+    "bin": ["bin/coverage-checker"]
+}
