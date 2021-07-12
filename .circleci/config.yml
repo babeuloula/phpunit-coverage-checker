@@ -1,0 +1,76 @@
+version: 2.1
+
+commands:
+    tests:
+        description: "Execute tests"
+        steps:
+            - run:
+                  name: "Execute: tests/run.sh"
+                  command: sh ./tests/run.sh
+
+executors:
+    php7_1:
+        docker:
+            - image: php:7.1-cli-alpine
+        working_directory: ~/repository
+
+    php7_2:
+        docker:
+            - image: php:7.2-cli-alpine
+        working_directory: ~/repository
+
+    php7_3:
+        docker:
+            - image: php:7.3-cli-alpine
+        working_directory: ~/repository
+
+    php7_4:
+        docker:
+            - image: php:7.4-cli-alpine
+        working_directory: ~/repository
+
+    php8_0:
+        docker:
+            - image: php:8.0-cli-alpine
+        working_directory: ~/repository
+
+jobs:
+    tests_7_1:
+        executor: php7_1
+        steps:
+            - checkout
+            - tests
+
+    tests_7_2:
+        executor: php7_2
+        steps:
+            - checkout
+            - tests
+
+    tests_7_3:
+        executor: php7_3
+        steps:
+            - checkout
+            - tests
+
+    tests_7_4:
+        executor: php7_4
+        steps:
+            - checkout
+            - tests
+
+    tests_8_0:
+        executor: php8_0
+        steps:
+            - checkout
+            - tests
+
+workflows:
+    version: 2.1
+    Tests:
+        jobs:
+            - tests_7_1
+            - tests_7_2
+            - tests_7_3
+            - tests_7_4
+            - tests_8_0
