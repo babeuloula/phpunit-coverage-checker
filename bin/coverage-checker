@@ -1,0 +1,121 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+const STATUS_OK = 0;
+const STATUS_ERROR = 1;
+const COLORS = [
+    'green' => '0;32',
+    'cyan' => '0;36',
+    'red' => '0;31',
+];
+
+function formatPercent(float $number): string
+{
+    return sprintf('%0.2f%%', $number);
+}
+
+function coloredOutput(string $string, string $color): string
+{
+    return "\033[" . COLORS[$color] . "m" . $string . "\033[0m";
+}
+
+function output(string $msg, ?string $color = null, ?int $exitCode = STATUS_OK): void
+{
+    if (true === \is_string($color)) {
+        $msg = coloredOutput($msg, $color);
+    }
+
+    echo $msg . PHP_EOL;
+
+    if (true === \is_int($exitCode)) {
+        exit($exitCode);
+    }
+}
+
+if (3 !== $argc) {
+    output(
+        sprintf(
+            "Usage: %s <path/to/coverage.xml> <threshold>",
+            $argv[0]
+        ),
+        'red',
+        STATUS_ERROR
+    );
+}
+
+if (false === \array_key_exists(1, $argv) || false === \file_exists($argv[1])) {
+    output(
+        sprintf(
+            "Invalid input file %s provided.",
+            $argv[1]
+        ),
+        'red',
+        STATUS_ERROR
+    );
+}
+
+if (false === \array_key_exists(2, $argv) || false === \is_numeric($argv[2])) {
+    output(
+        sprintf(
+            "Parameter threshold must be an integer, %s given.",
+            \gettype($argv[2])
+        ),
+        'red',
+        STATUS_ERROR
+    );
+}
+
+if (0 > (int) $argv[2] || 100 < (int) $argv[2]) {
+    output(
+        "Parameter threshold must be between 0 and 100.",
+        'red',
+        STATUS_ERROR
+    );
+}
+
+$file = $argv[1];
+$threshold = (float) $argv[2];
+
+$coverage = new SimpleXMLElement(file_get_contents($file));
+$ratio = (float) $coverage->project->directory->totals->lines["percent"];
+
+output(
+    sprintf(
+        "Line coverage: %s",
+        coloredOutput(formatPercent($ratio), 'cyan')
+    ),
+    null,
+    null
+);
+output(
+    sprintf(
+        "Threshold: %s",
+        coloredOutput(formatPercent($threshold), 'cyan')
+    ),
+    null,
+    null
+);
+
+output('', null, null);
+
+if ($ratio < $threshold) {
+    output(
+        sprintf(
+            "Total code coverage is %s which is below the accepted %s.",
+            formatPercent($ratio),
+            formatPercent($threshold)
+        ),
+        'red',
+        STATUS_ERROR
+    );
+}
+
+output(
+    sprintf(
+        "Total code coverage is %s.",
+        formatPercent($ratio)
+    ),
+    'green'
+);
