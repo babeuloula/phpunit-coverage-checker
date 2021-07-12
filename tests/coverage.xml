@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<phpunit xmlns="https://schema.phpunit.de/coverage/1.0">
+  <project source="/var/www/html/src">
+    <directory name="/">
+      <totals>
+        <lines total="8693" comments="1740" code="6953" executable="1954" executed="1567" percent="80.19"/>
+        <methods count="460" tested="296" percent="64.35"/>
+        <functions count="0" tested="0" percent="0"/>
+        <classes count="83" tested="39" percent="46.99"/>
+        <traits count="5" tested="0" percent="0.00"/>
+      </totals>
+    </directory>
+  </project>
+</phpunit>
